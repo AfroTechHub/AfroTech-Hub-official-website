@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, LayoutDashboard, Image as ImageIcon, Link as LinkIcon, Save, X, Trash2, Edit2, Upload, AlertCircle, ArrowLeft } from 'lucide-react';
+import { Plus, LayoutDashboard, Image as ImageIcon, Link as LinkIcon, Save, X, Trash2, Edit2, Upload, AlertCircle, ArrowLeft, Github } from 'lucide-react';
 import { Project } from '../types';
 import { storageService } from '../services/storage';
 
@@ -250,6 +250,22 @@ const DeveloperConsole: React.FC<DeveloperConsoleProps> = ({ onProjectAdded }) =
                   {errors.demoUrl && <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3"/> {errors.demoUrl}</p>}
                 </div>
                 <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">Repository Link</label>
+                  <div className="relative">
+                    <Github className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <input 
+                      type="url" 
+                      className={`w-full pl-9 pr-4 py-2 bg-slate-50 border rounded-lg focus:ring-1 focus:ring-primary ${errors.repoUrl ? 'border-red-500' : 'border-slate-200'}`}
+                      placeholder="https://github.com/..."
+                      value={formData.repoUrl}
+                      onChange={e => setFormData({...formData, repoUrl: e.target.value})}
+                    />
+                  </div>
+                  {errors.repoUrl && <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3"/> {errors.repoUrl}</p>}
+                </div>
+              </div>
+
+              <div>
                   <label className="block text-sm font-medium text-slate-700 mb-2">Tech Stack (Tags)</label>
                   <input 
                     type="text" 
@@ -267,7 +283,6 @@ const DeveloperConsole: React.FC<DeveloperConsoleProps> = ({ onProjectAdded }) =
                       </span>
                     ))}
                   </div>
-                </div>
               </div>
 
               <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">

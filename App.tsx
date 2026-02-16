@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowRight, ChevronDown, Layout, Database, Terminal, Cpu, CheckCircle2, Globe } from 'lucide-react';
+import { ArrowRight, ChevronDown, Layout, Terminal, Cpu, CheckCircle2, Globe } from 'lucide-react';
 import NavBar from './components/NavBar';
 import ProjectCard from './components/ProjectCard';
 import AIChat from './components/AIChat';
 import Login from './components/Login';
 import Register from './components/Register';
 import DeveloperConsole from './components/DeveloperConsole';
-import { SKILLS, SOCIALS, MY_NAME, MY_BIO } from './constants';
+import { SOCIALS, MY_NAME, MY_BIO } from './constants';
 import { SectionId, Project, User, ViewState } from './types';
 import { storageService } from './services/storage';
 
@@ -36,22 +36,6 @@ function App() {
   const handleProjectAdded = () => {
     setProjects(storageService.getProjects());
     setCurrentView(ViewState.HOME);
-  };
-
-  const categories = Array.from(new Set(SKILLS.map(s => s.category)));
-
-  const getCategoryIcon = (cat: string) => {
-    switch(cat) {
-      case 'frontend': return <Layout className="w-6 h-6" />;
-      case 'backend': return <Database className="w-6 h-6" />;
-      case 'tools': return <Terminal className="w-6 h-6" />;
-      case 'ai': return <Cpu className="w-6 h-6" />;
-      default: return null;
-    }
-  };
-
-  const getCategoryLabel = (cat: string) => {
-    return cat.charAt(0).toUpperCase() + cat.slice(1);
   };
 
   // Render Logic
@@ -180,45 +164,6 @@ function App() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {projects.map((project) => (
                     <ProjectCard key={project.id} project={project} />
-                  ))}
-                </div>
-              </div>
-            </section>
-
-            {/* Skills Section */}
-            <section id={SectionId.SKILLS} className="py-24 px-4 bg-white relative">
-              <div className="max-w-7xl mx-auto">
-                <div className="text-center mb-16">
-                  <h2 className="text-sm font-bold text-primary uppercase tracking-wider mb-2">Capabilities</h2>
-                  <h3 className="text-3xl md:text-4xl font-display font-bold text-slate-900">Our Tech Stack</h3>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                  {categories.map((category) => (
-                    <div key={category} className="bg-white border border-slate-100 rounded-2xl p-8 hover:shadow-xl hover:shadow-primary/5 transition-all group">
-                      <div className="flex items-center gap-3 mb-6">
-                        <div className="p-3 bg-orange-50 rounded-lg text-primary group-hover:bg-primary group-hover:text-white transition-colors">
-                          {getCategoryIcon(category)}
-                        </div>
-                        <h3 className="text-lg font-bold text-slate-800">{getCategoryLabel(category)}</h3>
-                      </div>
-                      <div className="space-y-4">
-                        {SKILLS.filter(s => s.category === category).map((skill) => (
-                          <div key={skill.name}>
-                            <div className="flex justify-between text-sm mb-1.5">
-                              <span className="text-slate-700 font-medium">{skill.name}</span>
-                              <span className="text-slate-400 text-xs">{skill.level}%</span>
-                            </div>
-                            <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                              <div 
-                                className="h-full bg-primary rounded-full"
-                                style={{ width: `${skill.level}%` }}
-                              />
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
                   ))}
                 </div>
               </div>

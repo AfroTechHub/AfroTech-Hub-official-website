@@ -42,7 +42,6 @@ export interface User {
 export enum SectionId {
   HERO = 'home',
   APPS = 'apps',
-  SKILLS = 'skills',
   ABOUT = 'about',
   CONTACT = 'contact',
 }

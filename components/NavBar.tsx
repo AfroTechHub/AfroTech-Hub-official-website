@@ -38,7 +38,6 @@ const NavBar: React.FC<NavBarProps> = ({ user, onNavigate, onLogout, currentView
 
   const navItems = [
     { label: 'Apps', id: SectionId.APPS },
-    { label: 'Services', id: SectionId.SKILLS },
     { label: 'About', id: SectionId.ABOUT },
   ];
 
