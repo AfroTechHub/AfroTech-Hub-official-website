@@ -1,30 +1,45 @@
-import React, { useState, useEffect } from 'react';
-import { Menu, X, Globe, User as UserIcon, LogOut, LayoutDashboard } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Menu, X, Globe, User as UserIcon, LogOut, LayoutDashboard, ChevronDown, Sparkles } from 'lucide-react';
 import { SectionId, User, ViewState } from '../types';
+import { storageService } from '../services/storage';
 
 interface NavBarProps {
   user: User | null;
   onNavigate: (view: ViewState) => void;
   onLogout: () => void;
+  onUserUpdate: (user: User) => void;
   currentView: ViewState;
 }
 
-const NavBar: React.FC<NavBarProps> = ({ user, onNavigate, onLogout, currentView }) => {
+const NavBar: React.FC<NavBarProps> = ({ user, onNavigate, onLogout, onUserUpdate, currentView }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const profileRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
+    
+    const handleClickOutside = (event: MouseEvent) => {
+      if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
+        setIsProfileOpen(false);
+      }
+    };
+
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    document.addEventListener('mousedown', handleClickOutside);
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, []);
 
   const handleNavClick = (id: SectionId) => {
     if (currentView !== ViewState.HOME) {
       onNavigate(ViewState.HOME);
-      // Wait for route change before scrolling
       setTimeout(() => {
         const element = document.getElementById(id);
         if (element) element.scrollIntoView({ behavior: 'smooth' });
@@ -34,6 +49,18 @@ const NavBar: React.FC<NavBarProps> = ({ user, onNavigate, onLogout, currentView
       if (element) element.scrollIntoView({ behavior: 'smooth' });
     }
     setIsMobileMenuOpen(false);
+  };
+
+  const handleUpgrade = () => {
+    if (user) {
+      const updatedUser: User = { ...user, role: 'developer' };
+      storageService.updateUser(updatedUser);
+      onUserUpdate(updatedUser);
+      setIsProfileOpen(false);
+      setIsMobileMenuOpen(false);
+      // Optional: Navigate to console immediately after upgrade
+      onNavigate(ViewState.CONSOLE);
+    }
   };
 
   const navItems = [
@@ -78,25 +105,58 @@ const NavBar: React.FC<NavBarProps> = ({ user, onNavigate, onLogout, currentView
             <div className="h-6 w-px bg-slate-300 mx-2" />
 
             {user ? (
-              <div className="flex items-center gap-4">
-                {user.role === 'developer' && (
-                  <button
-                    onClick={() => onNavigate(ViewState.CONSOLE)}
-                    className="flex items-center gap-2 text-sm font-bold text-slate-700 hover:text-primary transition-colors"
-                  >
-                    <LayoutDashboard className="w-4 h-4" /> Console
-                  </button>
+              <div className="relative" ref={profileRef}>
+                <button 
+                  onClick={() => setIsProfileOpen(!isProfileOpen)}
+                  className="flex items-center gap-2 pl-2 pr-1 py-1 rounded-full hover:bg-slate-100 transition-colors"
+                >
+                   <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
+                     {user.name.charAt(0).toUpperCase()}
+                   </div>
+                   <span className="text-sm font-medium text-slate-700 max-w-[100px] truncate">{user.name}</span>
+                   <ChevronDown className="w-4 h-4 text-slate-400" />
+                </button>
+
+                {/* Profile Dropdown */}
+                {isProfileOpen && (
+                  <div className="absolute right-0 top-full mt-2 w-64 bg-white rounded-xl shadow-xl border border-slate-100 py-2 animate-fade-in-up origin-top-right">
+                    <div className="px-4 py-3 border-b border-slate-100 mb-2">
+                      <p className="text-sm font-bold text-slate-900 truncate">{user.name}</p>
+                      <p className="text-xs text-slate-500 truncate">{user.email}</p>
+                    </div>
+                    
+                    {user.role === 'developer' ? (
+                      <button
+                        onClick={() => {
+                          onNavigate(ViewState.CONSOLE);
+                          setIsProfileOpen(false);
+                        }}
+                        className="w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-primary flex items-center gap-2"
+                      >
+                        <LayoutDashboard className="w-4 h-4" /> Developer Console
+                      </button>
+                    ) : (
+                      <button
+                        onClick={handleUpgrade}
+                        className="w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-primary flex items-center gap-2 group"
+                      >
+                        <Sparkles className="w-4 h-4 text-accent group-hover:text-primary" /> Become a Developer
+                      </button>
+                    )}
+                    
+                    <div className="my-2 border-t border-slate-100" />
+                    
+                    <button
+                      onClick={() => {
+                        onLogout();
+                        setIsProfileOpen(false);
+                      }}
+                      className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
+                    >
+                      <LogOut className="w-4 h-4" /> Sign Out
+                    </button>
+                  </div>
                 )}
-                <div className="flex items-center gap-3 pl-4 border-l border-slate-200">
-                  <span className="text-sm font-medium text-slate-900">Hi, {user.name}</span>
-                  <button 
-                    onClick={onLogout}
-                    className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-full transition-all"
-                    title="Sign Out"
-                  >
-                    <LogOut className="w-5 h-5" />
-                  </button>
-                </div>
               </div>
             ) : (
               <div className="flex items-center gap-4">
@@ -143,19 +203,30 @@ const NavBar: React.FC<NavBarProps> = ({ user, onNavigate, onLogout, currentView
           <div className="border-t border-slate-100 my-2 pt-2">
             {user ? (
               <>
-                 {user.role === 'developer' && (
+                <div className="px-4 py-2 mb-2">
+                  <p className="text-sm font-bold text-slate-900">{user.name}</p>
+                  <p className="text-xs text-slate-500">{user.email}</p>
+                </div>
+                 {user.role === 'developer' ? (
                   <button
                     onClick={() => { onNavigate(ViewState.CONSOLE); setIsMobileMenuOpen(false); }}
-                    className="block w-full text-left px-4 py-3 text-base font-semibold text-slate-700 hover:text-primary hover:bg-orange-50 rounded-lg"
+                    className="block w-full text-left px-4 py-3 text-base font-semibold text-slate-700 hover:text-primary hover:bg-orange-50 rounded-lg flex items-center gap-2"
                   >
-                    Developer Console
+                     <LayoutDashboard className="w-4 h-4" /> Developer Console
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleUpgrade}
+                    className="block w-full text-left px-4 py-3 text-base font-semibold text-slate-700 hover:text-primary hover:bg-orange-50 rounded-lg flex items-center gap-2"
+                  >
+                     <Sparkles className="w-4 h-4 text-accent" /> Upgrade to Developer
                   </button>
                 )}
                 <button
                   onClick={() => { onLogout(); setIsMobileMenuOpen(false); }}
-                  className="block w-full text-left px-4 py-3 text-base font-semibold text-red-600 hover:bg-red-50 rounded-lg"
+                  className="block w-full text-left px-4 py-3 text-base font-semibold text-red-600 hover:bg-red-50 rounded-lg flex items-center gap-2"
                 >
-                  Sign Out
+                  <LogOut className="w-4 h-4" /> Sign Out
                 </button>
               </>
             ) : (

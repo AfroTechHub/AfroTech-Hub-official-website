@@ -6,6 +6,7 @@ import AIChat from './components/AIChat';
 import Login from './components/Login';
 import Register from './components/Register';
 import DeveloperConsole from './components/DeveloperConsole';
+import AppDetails from './components/AppDetails';
 import { SOCIALS, MY_NAME, MY_BIO } from './constants';
 import { SectionId, Project, User, ViewState } from './types';
 import { storageService } from './services/storage';
@@ -14,6 +15,7 @@ function App() {
   const [currentView, setCurrentView] = useState<ViewState>(ViewState.HOME);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [projects, setProjects] = useState<Project[]>([]);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
   useEffect(() => {
     // Load initial data
@@ -24,7 +26,8 @@ function App() {
 
   const handleLogin = (user: User) => {
     setCurrentUser(user);
-    setCurrentView(user.role === 'developer' ? ViewState.CONSOLE : ViewState.HOME);
+    // Standard users go to home, developers *can* access console but default to home to explore first
+    setCurrentView(ViewState.HOME);
   };
 
   const handleLogout = () => {
@@ -33,9 +36,19 @@ function App() {
     setCurrentView(ViewState.HOME);
   };
 
+  const handleUserUpdate = (updatedUser: User) => {
+    setCurrentUser(updatedUser);
+  };
+
   const handleProjectAdded = () => {
     setProjects(storageService.getProjects());
     setCurrentView(ViewState.HOME);
+  };
+
+  const handleProjectClick = (project: Project) => {
+    setSelectedProject(project);
+    setCurrentView(ViewState.APP_DETAILS);
+    window.scrollTo(0, 0);
   };
 
   // Render Logic
@@ -47,6 +60,16 @@ function App() {
         return <Register onLogin={handleLogin} onNavigate={setCurrentView} />;
       case ViewState.CONSOLE:
         return <DeveloperConsole onProjectAdded={handleProjectAdded} />;
+      case ViewState.APP_DETAILS:
+        return selectedProject ? (
+          <AppDetails 
+            project={selectedProject} 
+            onBack={() => setCurrentView(ViewState.HOME)} 
+          />
+        ) : (
+          /* Fallback if state is inconsistent */
+          <div className="pt-24 text-center">App not found. <button onClick={() => setCurrentView(ViewState.HOME)} className="text-primary underline">Go Home</button></div>
+        );
       case ViewState.HOME:
       default:
         return (
@@ -163,7 +186,11 @@ function App() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {projects.map((project) => (
-                    <ProjectCard key={project.id} project={project} />
+                    <ProjectCard 
+                      key={project.id} 
+                      project={project} 
+                      onClick={handleProjectClick}
+                    />
                   ))}
                 </div>
               </div>
@@ -228,12 +255,15 @@ function App() {
 
   return (
     <div className="bg-light-50 min-h-screen text-slate-800 font-sans selection:bg-primary/20 selection:text-primary">
-      <NavBar 
-        user={currentUser} 
-        onNavigate={setCurrentView}
-        onLogout={handleLogout}
-        currentView={currentView}
-      />
+      {currentView !== ViewState.APP_DETAILS && (
+        <NavBar 
+          user={currentUser} 
+          onNavigate={setCurrentView}
+          onLogout={handleLogout}
+          onUserUpdate={handleUserUpdate}
+          currentView={currentView}
+        />
+      )}
       {renderContent()}
       <AIChat />
     </div>

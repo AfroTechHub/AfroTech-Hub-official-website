@@ -103,14 +103,23 @@ const DeveloperConsole: React.FC<DeveloperConsoleProps> = ({ onProjectAdded }) =
     if (!formData.description?.trim()) newErrors.description = 'Description is required';
     if (!formData.imageUrl?.trim()) newErrors.imageUrl = 'Image is required';
     
-    // URL Validation Regex
-    const urlRegex = /^(https?:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/;
+    // Strict URL Validation for http/https
+    const urlRegex = /^(https?:\/\/)([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/;
     
-    if (formData.demoUrl && !urlRegex.test(formData.demoUrl)) {
-      newErrors.demoUrl = 'Invalid URL format (must start with http:// or https://)';
+    if (formData.demoUrl) {
+       if (!formData.demoUrl.startsWith('http://') && !formData.demoUrl.startsWith('https://')) {
+          newErrors.demoUrl = 'URL must start with http:// or https://';
+       } else if (!urlRegex.test(formData.demoUrl)) {
+          newErrors.demoUrl = 'Please enter a valid URL format';
+       }
     }
-    if (formData.repoUrl && !urlRegex.test(formData.repoUrl)) {
-      newErrors.repoUrl = 'Invalid URL format (must start with http:// or https://)';
+
+    if (formData.repoUrl) {
+       if (!formData.repoUrl.startsWith('http://') && !formData.repoUrl.startsWith('https://')) {
+          newErrors.repoUrl = 'URL must start with http:// or https://';
+       } else if (!urlRegex.test(formData.repoUrl)) {
+          newErrors.repoUrl = 'Please enter a valid URL format';
+       }
     }
 
     setErrors(newErrors);

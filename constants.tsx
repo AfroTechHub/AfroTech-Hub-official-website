@@ -1,4 +1,4 @@
-import { Project, Skill, SocialLink } from './types';
+import { Project, SocialLink } from './types';
 import { Github, Linkedin, Twitter, Mail } from 'lucide-react';
 import React from 'react';
 
@@ -47,17 +47,6 @@ export const PROJECTS: Project[] = [
   }
 ];
 
-export const SKILLS: Skill[] = [
-  { name: 'React', icon: 'Atom', category: 'frontend', level: 95 },
-  { name: 'TypeScript', icon: 'FileCode', category: 'frontend', level: 90 },
-  { name: 'Tailwind CSS', icon: 'Palette', category: 'frontend', level: 95 },
-  { name: 'Node.js', icon: 'Server', category: 'backend', level: 85 },
-  { name: 'Python', icon: 'Snake', category: 'backend', level: 80 },
-  { name: 'PostgreSQL', icon: 'Database', category: 'backend', level: 85 },
-  { name: 'Gemini API', icon: 'Brain', category: 'ai', level: 90 },
-  { name: 'Docker', icon: 'Container', category: 'tools', level: 75 },
-];
-
 export const SOCIALS: SocialLink[] = [
   { platform: 'GitHub', url: 'https://github.com', icon: <Github className="w-5 h-5" /> },
   { platform: 'LinkedIn', url: 'https://linkedin.com', icon: <Linkedin className="w-5 h-5" /> },
@@ -75,9 +64,6 @@ Bio: ${MY_BIO}
 
 Projects (Our Apps):
 ${PROJECTS.map(p => `- ${p.title}: ${p.description} (Tech: ${p.tags.join(', ')})`).join('\n')}
-
-Skills (Our Tech Stack):
-${SKILLS.map(s => `- ${s.name} (${s.category})`).join('\n')}
 
 Guidelines:
 1. Be professional, friendly, and concise.

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Mail, Lock, CheckCircle, Briefcase } from 'lucide-react';
+import { User, Mail, Lock, CheckCircle, Briefcase, ArrowRight } from 'lucide-react';
 import { storageService } from '../services/storage';
 import { User as UserType, ViewState } from '../types';
 
@@ -11,15 +11,15 @@ interface RegisterProps {
 const Register: React.FC<RegisterProps> = ({ onLogin, onNavigate }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [isDeveloper, setIsDeveloper] = useState(false);
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    // Default role is 'user'. Can upgrade to 'developer' in profile.
     const newUser: UserType = {
       id: Date.now().toString(),
       name,
       email,
-      role: isDeveloper ? 'developer' : 'user',
+      role: 'user', 
     };
 
     if (storageService.register(newUser)) {
@@ -82,29 +82,11 @@ const Register: React.FC<RegisterProps> = ({ onLogin, onNavigate }) => {
             </div>
           </div>
 
-          <div 
-            className={`p-4 border rounded-xl cursor-pointer transition-all ${
-              isDeveloper ? 'bg-primary/5 border-primary' : 'bg-slate-50 border-slate-200 hover:bg-slate-100'
-            }`}
-            onClick={() => setIsDeveloper(!isDeveloper)}
-          >
-            <div className="flex items-center gap-3">
-              <div className={`p-2 rounded-full ${isDeveloper ? 'bg-primary text-white' : 'bg-slate-200 text-slate-500'}`}>
-                <Briefcase className="w-5 h-5" />
-              </div>
-              <div className="flex-1">
-                <div className="font-bold text-slate-900">Developer Account</div>
-                <div className="text-xs text-slate-500">I want to publish my own apps to the hub.</div>
-              </div>
-              {isDeveloper && <CheckCircle className="w-6 h-6 text-primary" />}
-            </div>
-          </div>
-
           <button 
             type="submit"
-            className="w-full bg-primary hover:bg-orange-700 text-white font-bold py-3 rounded-lg shadow-lg shadow-primary/20 transition-all"
+            className="w-full bg-primary hover:bg-orange-700 text-white font-bold py-3 rounded-lg shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2"
           >
-            Create Account
+            Create Account <ArrowRight className="w-4 h-4" />
           </button>
         </form>
 

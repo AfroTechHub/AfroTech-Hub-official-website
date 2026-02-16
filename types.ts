@@ -11,13 +11,6 @@ export interface Project {
   featured: boolean;
 }
 
-export interface Skill {
-  name: string;
-  icon: string; 
-  category: 'frontend' | 'backend' | 'tools' | 'ai';
-  level: number; 
-}
-
 export interface SocialLink {
   platform: string;
   url: string;
@@ -51,4 +44,5 @@ export enum ViewState {
   LOGIN = 'LOGIN',
   REGISTER = 'REGISTER',
   CONSOLE = 'CONSOLE',
+  APP_DETAILS = 'APP_DETAILS',
 }

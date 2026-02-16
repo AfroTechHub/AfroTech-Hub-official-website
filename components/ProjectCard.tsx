@@ -4,11 +4,15 @@ import { Project } from '../types';
 
 interface ProjectCardProps {
   project: Project;
+  onClick?: (project: Project) => void;
 }
 
-const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
+const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
   return (
-    <div className="group relative bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 border border-slate-100 hover:border-primary/20 hover:-translate-y-1">
+    <div 
+      onClick={() => onClick && onClick(project)}
+      className="group relative bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 border border-slate-100 hover:border-primary/20 hover:-translate-y-1 cursor-pointer"
+    >
       {project.featured && (
         <div className="absolute top-4 left-4 z-10 px-3 py-1 bg-white/90 text-primary text-xs font-bold rounded-full shadow-sm flex items-center gap-1 backdrop-blur-sm">
           <Zap className="w-3 h-3 fill-primary" /> Featured App
@@ -39,21 +43,21 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
         </div>
 
         <div className="flex items-center gap-4 pt-4 border-t border-slate-100">
-          {project.demoUrl && (
-            <a 
-              href={project.demoUrl} 
-              className="flex items-center gap-2 text-sm font-bold text-primary hover:text-orange-700 transition-colors"
-            >
-              <ExternalLink className="w-4 h-4" /> Live Demo
-            </a>
-          )}
+          <button className="text-sm font-bold text-primary flex items-center gap-1">
+             View Details
+          </button>
+          {/* Prevent bubble up if user clicks specifically on repo link */}
           {project.repoUrl && (
-            <a 
-              href={project.repoUrl} 
-              className="flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-slate-800 transition-colors"
-            >
-              <Github className="w-4 h-4" /> Code
-            </a>
+            <div onClick={(e) => e.stopPropagation()} className="ml-auto">
+                <a 
+                href={project.repoUrl} 
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-slate-800 transition-colors"
+                >
+                <Github className="w-4 h-4" />
+                </a>
+            </div>
           )}
         </div>
       </div>

@@ -59,6 +59,19 @@ export const storageService = {
     return null;
   },
 
+  updateUser: (user: User): void => {
+    // Update in USERS list
+    const users = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
+    const updatedUsers = users.map((u: User) => u.id === user.id ? user : u);
+    localStorage.setItem(USERS_KEY, JSON.stringify(updatedUsers));
+    
+    // Update session if it matches the current user
+    const session = JSON.parse(localStorage.getItem(SESSION_KEY) || '{}');
+    if (session.id === user.id) {
+      localStorage.setItem(SESSION_KEY, JSON.stringify(user));
+    }
+  },
+
   logout: () => {
     localStorage.removeItem(SESSION_KEY);
   },
