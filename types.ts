@@ -13,9 +13,9 @@ export interface Project {
 
 export interface Skill {
   name: string;
-  icon: string; // Lucide icon name or image url
+  icon: string; 
   category: 'frontend' | 'backend' | 'tools' | 'ai';
-  level: number; // 1-100
+  level: number; 
 }
 
 export interface SocialLink {
@@ -31,10 +31,25 @@ export interface ChatMessage {
   isError?: boolean;
 }
 
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: 'developer' | 'user';
+  avatar?: string;
+}
+
 export enum SectionId {
   HERO = 'home',
   APPS = 'apps',
   SKILLS = 'skills',
   ABOUT = 'about',
   CONTACT = 'contact',
+}
+
+export enum ViewState {
+  HOME = 'HOME',
+  LOGIN = 'LOGIN',
+  REGISTER = 'REGISTER',
+  CONSOLE = 'CONSOLE',
 }
