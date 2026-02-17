@@ -7,6 +7,7 @@ import Login from './components/Login';
 import Register from './components/Register';
 import DeveloperConsole from './components/DeveloperConsole';
 import AppDetails from './components/AppDetails';
+import About from './components/About';
 import { SOCIALS, MY_NAME, MY_BIO } from './constants';
 import { SectionId, Project, User, ViewState } from './types';
 import { storageService } from './services/storage';
@@ -60,6 +61,8 @@ function App() {
         return <Register onLogin={handleLogin} onNavigate={setCurrentView} />;
       case ViewState.CONSOLE:
         return <DeveloperConsole onProjectAdded={handleProjectAdded} />;
+      case ViewState.ABOUT:
+        return <About onNavigate={setCurrentView} />;
       case ViewState.APP_DETAILS:
         return selectedProject ? (
           <AppDetails 
@@ -196,30 +199,6 @@ function App() {
               </div>
             </section>
 
-            {/* About Section */}
-            <section id={SectionId.ABOUT} className="py-24 px-4 bg-secondary text-white relative overflow-hidden">
-              {/* Pattern overlay */}
-              <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '30px 30px' }}></div>
-              
-              <div className="max-w-4xl mx-auto text-center relative z-10">
-                <div className="w-16 h-16 bg-primary mx-auto rounded-2xl flex items-center justify-center mb-8 shadow-lg shadow-primary/30 rotate-3">
-                   <Globe className="w-8 h-8 text-white" />
-                </div>
-                
-                <h2 className="text-3xl md:text-4xl font-display font-bold mb-8">Who We Are</h2>
-                <div className="space-y-6 text-slate-300 leading-relaxed text-lg md:text-xl font-light">
-                  <p>
-                    <span className="text-white font-medium">AfroTech Hub</span> is a forward-thinking digital studio. 
-                    We blend creativity with engineering excellence to build software that matters.
-                  </p>
-                  <p>
-                    From intuitive mobile apps to complex enterprise systems, our mission is to empower businesses through technology.
-                    We are deeply committed to the React ecosystem and the transformative power of AI.
-                  </p>
-                </div>
-              </div>
-            </section>
-
             {/* Contact Section */}
             <section id={SectionId.CONTACT} className="py-24 px-4 bg-light-50">
               <div className="max-w-3xl mx-auto text-center">
@@ -255,7 +234,7 @@ function App() {
 
   return (
     <div className="bg-light-50 min-h-screen text-slate-800 font-sans selection:bg-primary/20 selection:text-primary">
-      {currentView !== ViewState.APP_DETAILS && (
+      {currentView !== ViewState.APP_DETAILS && currentView !== ViewState.LOGIN && currentView !== ViewState.REGISTER && (
         <NavBar 
           user={currentUser} 
           onNavigate={setCurrentView}

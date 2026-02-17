@@ -45,4 +45,5 @@ export enum ViewState {
   REGISTER = 'REGISTER',
   CONSOLE = 'CONSOLE',
   APP_DETAILS = 'APP_DETAILS',
+  ABOUT = 'ABOUT',
 }

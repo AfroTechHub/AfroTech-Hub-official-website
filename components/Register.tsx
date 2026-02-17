@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Mail, Lock, CheckCircle, Briefcase, ArrowRight } from 'lucide-react';
+import { User, Mail, Lock, CheckCircle, Briefcase, ArrowRight, ArrowLeft } from 'lucide-react';
 import { storageService } from '../services/storage';
 import { User as UserType, ViewState } from '../types';
 
@@ -31,8 +31,24 @@ const Register: React.FC<RegisterProps> = ({ onLogin, onNavigate }) => {
   };
 
   return (
-    <div className="min-h-screen pt-24 pb-12 flex flex-col justify-center items-center px-4">
-      <div className="max-w-md w-full bg-white rounded-2xl shadow-xl border border-slate-100 p-8">
+    <div className="min-h-screen bg-slate-50 flex flex-col justify-center items-center px-4 animate-fade-in-up">
+       {/* Back Navigation */}
+       <button 
+        onClick={() => onNavigate(ViewState.HOME)}
+        className="absolute top-8 left-8 p-2 rounded-full bg-white text-slate-600 hover:text-primary hover:shadow-md transition-all border border-slate-100 hidden md:block"
+        title="Back to Home"
+      >
+        <ArrowLeft className="w-6 h-6" />
+      </button>
+
+      <div className="max-w-md w-full bg-white rounded-2xl shadow-xl border border-slate-100 p-8 relative">
+        <button 
+           onClick={() => onNavigate(ViewState.HOME)}
+           className="absolute top-4 left-4 p-2 text-slate-400 hover:text-slate-700 md:hidden"
+        >
+          <ArrowLeft className="w-5 h-5" />
+        </button>
+
         <div className="text-center mb-8">
           <h2 className="text-3xl font-display font-bold text-slate-900">Create Account</h2>
           <p className="text-slate-600 mt-2">Join the AfroTech Hub community</p>

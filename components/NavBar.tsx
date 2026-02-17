@@ -37,16 +37,22 @@ const NavBar: React.FC<NavBarProps> = ({ user, onNavigate, onLogout, onUserUpdat
     };
   }, []);
 
-  const handleNavClick = (id: SectionId) => {
-    if (currentView !== ViewState.HOME) {
-      onNavigate(ViewState.HOME);
-      setTimeout(() => {
+  const handleNavClick = (id: string, isView: boolean = false) => {
+    if (isView) {
+      if (id === SectionId.ABOUT) {
+        onNavigate(ViewState.ABOUT);
+      }
+    } else {
+      if (currentView !== ViewState.HOME) {
+        onNavigate(ViewState.HOME);
+        setTimeout(() => {
+          const element = document.getElementById(id);
+          if (element) element.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+      } else {
         const element = document.getElementById(id);
         if (element) element.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
-    } else {
-      const element = document.getElementById(id);
-      if (element) element.scrollIntoView({ behavior: 'smooth' });
+      }
     }
     setIsMobileMenuOpen(false);
   };
@@ -58,14 +64,13 @@ const NavBar: React.FC<NavBarProps> = ({ user, onNavigate, onLogout, onUserUpdat
       onUserUpdate(updatedUser);
       setIsProfileOpen(false);
       setIsMobileMenuOpen(false);
-      // Optional: Navigate to console immediately after upgrade
       onNavigate(ViewState.CONSOLE);
     }
   };
 
   const navItems = [
-    { label: 'Apps', id: SectionId.APPS },
-    { label: 'About', id: SectionId.ABOUT },
+    { label: 'Apps', id: SectionId.APPS, isView: false },
+    { label: 'About', id: SectionId.ABOUT, isView: true },
   ];
 
   return (
@@ -93,7 +98,7 @@ const NavBar: React.FC<NavBarProps> = ({ user, onNavigate, onLogout, onUserUpdat
             {navItems.map((item) => (
               <button
                 key={item.id}
-                onClick={() => handleNavClick(item.id)}
+                onClick={() => handleNavClick(item.id, item.isView)}
                 className={`text-sm font-semibold transition-colors relative hover:text-primary ${
                   isScrolled || currentView !== ViewState.HOME ? 'text-slate-600' : 'text-slate-700'
                 }`}
@@ -194,7 +199,7 @@ const NavBar: React.FC<NavBarProps> = ({ user, onNavigate, onLogout, onUserUpdat
           {navItems.map((item) => (
             <button
               key={item.id}
-              onClick={() => handleNavClick(item.id)}
+              onClick={() => handleNavClick(item.id, item.isView)}
               className="block w-full text-left px-4 py-3 text-base font-semibold text-slate-700 hover:text-primary hover:bg-orange-50 rounded-lg"
             >
               {item.label}
