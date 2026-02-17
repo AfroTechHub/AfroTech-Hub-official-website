@@ -6,8 +6,10 @@ export interface Project {
   description: string;
   imageUrl: string;
   tags: string[];
-  demoUrl?: string;
+  demoUrl?: string; // Keep for backward compatibility or general website links
   repoUrl?: string;
+  pwaUrl?: string; // New: For Progressive Web Apps
+  apkUrl?: string; // New: For Android APK downloads
   featured: boolean;
 }
 

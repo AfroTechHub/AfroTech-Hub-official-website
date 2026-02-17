@@ -89,13 +89,7 @@ function App() {
 
               <div className="relative z-10 max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-12 items-center">
                 <div className="text-left animate-fade-in-up">
-                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-orange-50 border border-orange-100 mb-6">
-                    <span className="relative flex h-2 w-2">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
-                    </span>
-                    <span className="text-xs font-bold text-primary tracking-wide uppercase">Leading Innovation</span>
-                  </div>
+                  {/* Badge removed as requested */}
 
                   <h1 className="text-5xl md:text-7xl font-display font-extrabold text-slate-900 mb-6 tracking-tight leading-[1.1]">
                     Building the <br />

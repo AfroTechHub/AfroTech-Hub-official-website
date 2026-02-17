@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, LayoutDashboard, Image as ImageIcon, Link as LinkIcon, Save, X, Trash2, Edit2, Upload, AlertCircle, ArrowLeft, Github } from 'lucide-react';
+import { Plus, LayoutDashboard, Image as ImageIcon, Link as LinkIcon, Save, X, Trash2, Edit2, Upload, AlertCircle, ArrowLeft, Github, Smartphone, Globe } from 'lucide-react';
 import { Project } from '../types';
 import { storageService } from '../services/storage';
 
@@ -20,6 +20,8 @@ const DeveloperConsole: React.FC<DeveloperConsoleProps> = ({ onProjectAdded }) =
     tags: [],
     demoUrl: '',
     repoUrl: '',
+    pwaUrl: '',
+    apkUrl: '',
     featured: false
   });
   const [tagInput, setTagInput] = useState('');
@@ -41,6 +43,8 @@ const DeveloperConsole: React.FC<DeveloperConsoleProps> = ({ onProjectAdded }) =
       tags: [],
       demoUrl: '',
       repoUrl: '',
+      pwaUrl: '',
+      apkUrl: '',
       featured: false
     });
     setTagInput('');
@@ -106,21 +110,20 @@ const DeveloperConsole: React.FC<DeveloperConsoleProps> = ({ onProjectAdded }) =
     // Strict URL Validation for http/https
     const urlRegex = /^(https?:\/\/)([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/;
     
-    if (formData.demoUrl) {
-       if (!formData.demoUrl.startsWith('http://') && !formData.demoUrl.startsWith('https://')) {
-          newErrors.demoUrl = 'URL must start with http:// or https://';
-       } else if (!urlRegex.test(formData.demoUrl)) {
-          newErrors.demoUrl = 'Please enter a valid URL format';
-       }
-    }
+    const validateUrl = (url: string | undefined, fieldName: string) => {
+      if (url && url.trim() !== '') {
+         if (!url.startsWith('http://') && !url.startsWith('https://')) {
+            newErrors[fieldName] = 'URL must start with http:// or https://';
+         } else if (!urlRegex.test(url)) {
+            newErrors[fieldName] = 'Please enter a valid URL format';
+         }
+      }
+    };
 
-    if (formData.repoUrl) {
-       if (!formData.repoUrl.startsWith('http://') && !formData.repoUrl.startsWith('https://')) {
-          newErrors.repoUrl = 'URL must start with http:// or https://';
-       } else if (!urlRegex.test(formData.repoUrl)) {
-          newErrors.repoUrl = 'Please enter a valid URL format';
-       }
-    }
+    validateUrl(formData.demoUrl, 'demoUrl');
+    validateUrl(formData.repoUrl, 'repoUrl');
+    validateUrl(formData.pwaUrl, 'pwaUrl');
+    validateUrl(formData.apkUrl, 'apkUrl');
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -144,6 +147,8 @@ const DeveloperConsole: React.FC<DeveloperConsoleProps> = ({ onProjectAdded }) =
         tags: formData.tags || [],
         demoUrl: formData.demoUrl,
         repoUrl: formData.repoUrl,
+        pwaUrl: formData.pwaUrl,
+        apkUrl: formData.apkUrl,
         featured: formData.featured || false
       };
       storageService.addProject(newProject);
@@ -160,7 +165,7 @@ const DeveloperConsole: React.FC<DeveloperConsoleProps> = ({ onProjectAdded }) =
         <div className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-3xl font-display font-bold text-slate-900">Developer Console</h1>
-            <p className="text-slate-600">Manage your applications and deployments.</p>
+            <p className="text-slate-600">Manage your applications, PWAs, and APKs.</p>
           </div>
           {viewState === 'list' && (
             <button 
@@ -202,7 +207,7 @@ const DeveloperConsole: React.FC<DeveloperConsoleProps> = ({ onProjectAdded }) =
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">App Image <span className="text-red-500">*</span></label>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">App Icon / Screenshot <span className="text-red-500">*</span></label>
                   <div className="space-y-3">
                     <div className="relative">
                       <ImageIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -243,20 +248,62 @@ const DeveloperConsole: React.FC<DeveloperConsoleProps> = ({ onProjectAdded }) =
                 {errors.description && <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3"/> {errors.description}</p>}
               </div>
 
+              {/* Deployment Links */}
+              <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-4">
+                <h3 className="text-sm font-bold text-slate-700 flex items-center gap-2">
+                  <Smartphone className="w-4 h-4 text-primary" /> Deployment & Downloads
+                </h3>
+                
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-2">APK Download URL (Android)</label>
+                    <div className="relative">
+                      <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                      <input 
+                        type="url" 
+                        className={`w-full pl-9 pr-4 py-2 bg-white border rounded-lg focus:ring-1 focus:ring-primary ${errors.apkUrl ? 'border-red-500' : 'border-slate-200'}`}
+                        placeholder="https://example.com/app-release.apk"
+                        value={formData.apkUrl}
+                        onChange={e => setFormData({...formData, apkUrl: e.target.value})}
+                      />
+                    </div>
+                    {errors.apkUrl && <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3"/> {errors.apkUrl}</p>}
+                    <p className="text-xs text-slate-400 mt-1">Direct link to the .apk file</p>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-2">PWA / Web App URL</label>
+                    <div className="relative">
+                      <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                      <input 
+                        type="url" 
+                        className={`w-full pl-9 pr-4 py-2 bg-white border rounded-lg focus:ring-1 focus:ring-primary ${errors.pwaUrl ? 'border-red-500' : 'border-slate-200'}`}
+                        placeholder="https://app.example.com"
+                        value={formData.pwaUrl}
+                        onChange={e => setFormData({...formData, pwaUrl: e.target.value})}
+                      />
+                    </div>
+                    {errors.pwaUrl && <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3"/> {errors.pwaUrl}</p>}
+                    <p className="text-xs text-slate-400 mt-1">Link to the live Progressive Web App</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Source & Demo Links */}
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Demo Link</label>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">General Demo Link (Optional)</label>
                   <div className="relative">
                     <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                     <input 
                       type="url" 
                       className={`w-full pl-9 pr-4 py-2 bg-slate-50 border rounded-lg focus:ring-1 focus:ring-primary ${errors.demoUrl ? 'border-red-500' : 'border-slate-200'}`}
-                      placeholder="https://app.demo.com"
+                      placeholder="https://demo.com"
                       value={formData.demoUrl}
                       onChange={e => setFormData({...formData, demoUrl: e.target.value})}
                     />
                   </div>
-                  {errors.demoUrl && <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3"/> {errors.demoUrl}</p>}
+                   {errors.demoUrl && <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3"/> {errors.demoUrl}</p>}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-2">Repository Link</label>
@@ -342,11 +389,16 @@ const DeveloperConsole: React.FC<DeveloperConsoleProps> = ({ onProjectAdded }) =
                     <h3 className="font-bold text-lg text-slate-900">{project.title}</h3>
                     <p className="text-slate-500 text-sm line-clamp-1">{project.description}</p>
                     <div className="flex flex-wrap justify-center md:justify-start gap-2 mt-2">
-                      {project.tags.slice(0, 3).map(tag => (
-                        <span key={tag} className="text-xs px-2 py-0.5 bg-slate-100 text-slate-600 rounded">
-                          {tag}
-                        </span>
-                      ))}
+                       {project.apkUrl && (
+                          <span className="text-xs px-2 py-0.5 bg-green-100 text-green-700 rounded font-medium flex items-center gap-1">
+                             <Smartphone className="w-3 h-3" /> APK
+                          </span>
+                       )}
+                       {project.pwaUrl && (
+                          <span className="text-xs px-2 py-0.5 bg-blue-100 text-blue-700 rounded font-medium flex items-center gap-1">
+                             <Globe className="w-3 h-3" /> PWA
+                          </span>
+                       )}
                     </div>
                   </div>
                   <div className="flex gap-2">

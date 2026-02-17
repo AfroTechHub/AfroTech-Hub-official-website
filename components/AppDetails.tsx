@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowLeft, Star, Download, ShieldCheck, Share2, Info, ExternalLink, Github, Check, MonitorPlay } from 'lucide-react';
+import { ArrowLeft, Star, Download, ShieldCheck, Share2, Info, ExternalLink, Github, Check, MonitorPlay, Smartphone, Globe } from 'lucide-react';
 import { Project } from '../types';
 
 interface AppDetailsProps {
@@ -66,20 +66,43 @@ const AppDetails: React.FC<AppDetailsProps> = ({ project, onBack }) => {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3">
-               {project.demoUrl ? (
+               {/* APK Download Button */}
+               {project.apkUrl && (
+                  <a 
+                    href={project.apkUrl} 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-full shadow-lg shadow-green-600/25 transition-all flex items-center justify-center gap-2"
+                  >
+                    <Smartphone className="w-5 h-5" /> Download APK
+                  </a>
+               )}
+
+               {/* PWA / Web App Button */}
+               {project.pwaUrl ? (
+                  <a 
+                    href={project.pwaUrl} 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 bg-primary hover:bg-orange-700 text-white font-bold py-3 px-8 rounded-full shadow-lg shadow-primary/25 transition-all flex items-center justify-center gap-2"
+                  >
+                    <Globe className="w-5 h-5" /> Launch Web App
+                  </a>
+               ) : project.demoUrl ? (
+                   // Fallback for generic demo link
                   <a 
                     href={project.demoUrl} 
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex-1 bg-primary hover:bg-orange-700 text-white font-bold py-3 px-8 rounded-full shadow-lg shadow-primary/25 transition-all flex items-center justify-center gap-2"
                   >
-                    <MonitorPlay className="w-5 h-5" /> Open App
+                    <MonitorPlay className="w-5 h-5" /> Open Website
                   </a>
-               ) : (
+               ) : (!project.apkUrl && (
                   <button disabled className="flex-1 bg-slate-200 text-slate-500 font-bold py-3 px-8 rounded-full cursor-not-allowed flex items-center justify-center gap-2">
                     Coming Soon
                   </button>
-               )}
+               ))}
                
                {project.repoUrl && (
                   <a 

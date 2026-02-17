@@ -3,7 +3,8 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 
 interface ErrorBoundaryProps {
-  children: ReactNode;
+  // Fix: Make children optional to resolve "Property 'children' is missing" error when using the component
+  children?: ReactNode;
 }
 
 interface ErrorBoundaryState {
@@ -13,10 +14,8 @@ interface ErrorBoundaryState {
 
 // Error Boundary Component
 class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
-  constructor(props: ErrorBoundaryProps) {
-    super(props);
-    this.state = { hasError: false, error: null };
-  }
+  // Fix: Explicitly declare state property to resolve "Property 'state' does not exist" errors
+  public state: ErrorBoundaryState = { hasError: false, error: null };
 
   static getDerivedStateFromError(error: Error): ErrorBoundaryState {
     return { hasError: true, error };
@@ -47,6 +46,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
       );
     }
 
+    // Fix: Access children from props (props are inherited from Component)
     return this.props.children;
   }
 }
