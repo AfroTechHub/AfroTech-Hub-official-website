@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Mail, Lock, CheckCircle, Briefcase, ArrowRight, ArrowLeft } from 'lucide-react';
+import { User, Mail, Lock, CheckCircle, Briefcase, ArrowRight, ArrowLeft, Loader2, AlertCircle } from 'lucide-react';
 import { storageService } from '../services/storage';
 import { User as UserType, ViewState } from '../types';
 
@@ -11,22 +11,33 @@ interface RegisterProps {
 const Register: React.FC<RegisterProps> = ({ onLogin, onNavigate }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Default role is 'user'. Can upgrade to 'developer' in profile.
-    const newUser: UserType = {
-      id: Date.now().toString(),
-      name,
-      email,
-      role: 'user', 
-    };
+    setError('');
+    
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters.");
+      return;
+    }
 
-    if (storageService.register(newUser)) {
-      storageService.login(email); // Auto login
+    setIsLoading(true);
+
+    try {
+      const newUser = await storageService.register(name, email, password);
       onLogin(newUser);
-    } else {
-      alert('User already exists!');
+    } catch (err: any) {
+      console.error(err);
+      if (err.code === 'auth/email-already-in-use') {
+        setError('Email is already in use.');
+      } else {
+        setError(err.message || 'Registration failed.');
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -53,6 +64,12 @@ const Register: React.FC<RegisterProps> = ({ onLogin, onNavigate }) => {
           <h2 className="text-3xl font-display font-bold text-slate-900">Create Account</h2>
           <p className="text-slate-600 mt-2">Join the AfroTech Hub community</p>
         </div>
+
+        {error && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-100 rounded-lg flex items-center gap-2 text-red-600 text-sm">
+            <AlertCircle className="w-4 h-4" /> {error}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
@@ -94,15 +111,19 @@ const Register: React.FC<RegisterProps> = ({ onLogin, onNavigate }) => {
                 required
                 className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
                 placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
             </div>
+            <p className="text-xs text-slate-400 mt-1 ml-1">Must be at least 6 characters</p>
           </div>
 
           <button 
             type="submit"
-            className="w-full bg-primary hover:bg-orange-700 text-white font-bold py-3 rounded-lg shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2"
+            disabled={isLoading}
+            className="w-full bg-primary hover:bg-orange-700 text-white font-bold py-3 rounded-lg shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
           >
-            Create Account <ArrowRight className="w-4 h-4" />
+             {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <>Create Account <ArrowRight className="w-4 h-4" /></>}
           </button>
         </form>
 

@@ -57,14 +57,19 @@ const NavBar: React.FC<NavBarProps> = ({ user, onNavigate, onLogout, onUserUpdat
     setIsMobileMenuOpen(false);
   };
 
-  const handleUpgrade = () => {
+  const handleUpgrade = async () => {
     if (user) {
-      const updatedUser: User = { ...user, role: 'developer' };
-      storageService.updateUser(updatedUser);
-      onUserUpdate(updatedUser);
-      setIsProfileOpen(false);
-      setIsMobileMenuOpen(false);
-      onNavigate(ViewState.CONSOLE);
+      try {
+        const updatedUser: User = { ...user, role: 'developer' };
+        await storageService.updateUser(updatedUser);
+        onUserUpdate(updatedUser);
+        setIsProfileOpen(false);
+        setIsMobileMenuOpen(false);
+        onNavigate(ViewState.CONSOLE);
+      } catch (e) {
+        console.error("Failed to upgrade user", e);
+        // Could show toast error here
+      }
     }
   };
 
@@ -115,8 +120,12 @@ const NavBar: React.FC<NavBarProps> = ({ user, onNavigate, onLogout, onUserUpdat
                   onClick={() => setIsProfileOpen(!isProfileOpen)}
                   className="flex items-center gap-2 pl-2 pr-1 py-1 rounded-full hover:bg-slate-100 transition-colors"
                 >
-                   <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
-                     {user.name.charAt(0).toUpperCase()}
+                   <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold overflow-hidden">
+                     {user.avatar ? (
+                        <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
+                     ) : (
+                        user.name && user.name.charAt(0).toUpperCase()
+                     )}
                    </div>
                    <span className="text-sm font-medium text-slate-700 max-w-[100px] truncate">{user.name}</span>
                    <ChevronDown className="w-4 h-4 text-slate-400" />
@@ -166,13 +175,13 @@ const NavBar: React.FC<NavBarProps> = ({ user, onNavigate, onLogout, onUserUpdat
             ) : (
               <div className="flex items-center gap-4">
                  <button 
-                  onClick={() => onNavigate(ViewState.LOGIN)}
+                  onClick={() => onNavigate(ViewState.AUTH)}
                   className={`text-sm font-bold ${isScrolled || currentView !== ViewState.HOME ? 'text-slate-700 hover:text-primary' : 'text-slate-700 hover:text-primary'}`}
                 >
                   Sign In
                 </button>
                 <button 
-                  onClick={() => onNavigate(ViewState.REGISTER)}
+                  onClick={() => onNavigate(ViewState.AUTH)}
                   className="px-6 py-2.5 rounded-full bg-primary hover:bg-orange-700 text-white text-sm font-bold shadow-lg shadow-primary/20 transition-all transform hover:-translate-y-0.5"
                 >
                   Sign Up
@@ -237,16 +246,16 @@ const NavBar: React.FC<NavBarProps> = ({ user, onNavigate, onLogout, onUserUpdat
             ) : (
               <>
                 <button
-                  onClick={() => { onNavigate(ViewState.LOGIN); setIsMobileMenuOpen(false); }}
+                  onClick={() => { onNavigate(ViewState.AUTH); setIsMobileMenuOpen(false); }}
                   className="block w-full text-left px-4 py-3 text-base font-semibold text-slate-700 hover:text-primary hover:bg-orange-50 rounded-lg"
                 >
                   Sign In
                 </button>
                 <button
-                  onClick={() => { onNavigate(ViewState.REGISTER); setIsMobileMenuOpen(false); }}
+                  onClick={() => { onNavigate(ViewState.AUTH); setIsMobileMenuOpen(false); }}
                   className="block w-full text-left px-4 py-3 text-base font-semibold text-primary hover:bg-orange-50 rounded-lg"
                 >
-                  Sign Up
+                  Join Now
                 </button>
               </>
             )}

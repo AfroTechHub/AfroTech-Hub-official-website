@@ -156,7 +156,7 @@ const AppDetails: React.FC<AppDetailsProps> = ({ project, onBack }) => {
                 </p>
                 
                 <div className="mt-6 flex flex-wrap gap-2">
-                   {project.tags.map(tag => (
+                   {(project.tags || []).map(tag => (
                       <span key={tag} className="px-3 py-1 bg-white border border-slate-200 rounded-full text-xs font-semibold text-slate-600">
                         {tag}
                       </span>

@@ -1,5 +1,5 @@
 import { GoogleGenAI, Chat, GenerateContentResponse } from "@google/genai";
-import { SYSTEM_INSTRUCTION } from '../constants';
+import { SYSTEM_INSTRUCTION, CONTACT_DRAFT_PROMPT } from '../constants';
 
 // Use gemini-3-flash-preview for text chat tasks as recommended
 const MODEL_NAME = "gemini-3-flash-preview";
@@ -36,5 +36,25 @@ export const sendMessageToGemini = async (message: string): Promise<string> => {
   } catch (error) {
     console.error("Error communicating with Gemini:", error);
     return "I'm having trouble connecting to my brain right now. Please try again later.";
+  }
+};
+
+export const generateDraftMessage = async (topic: string): Promise<string> => {
+  try {
+    const apiKey = process.env.API_KEY;
+    if (!apiKey) throw new Error("API Key missing");
+
+    const ai = new GoogleGenAI({ apiKey });
+    const prompt = CONTACT_DRAFT_PROMPT.replace('{topic}', topic);
+
+    const response = await ai.models.generateContent({
+      model: "gemini-3-flash-preview",
+      contents: prompt,
+    });
+
+    return response.text || "";
+  } catch (error) {
+    console.error("Error generating draft:", error);
+    return "";
   }
 };

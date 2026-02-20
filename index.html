@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;700;800&display=swap" rel="stylesheet">
     <script>
-      // Polyfill process for browser environments to prevent "process is not defined" errors
+      // Polyfill process for browser environments
       if (typeof process === 'undefined') {
         window.process = { env: {} };
       }
@@ -23,9 +23,8 @@
               display: ['Outfit', 'sans-serif'],
             },
             colors: {
-              // Warm Tech Palette
-              primary: '#ea580c', // Orange 600 - Vibrant, Energetic
-              secondary: '#0f172a', // Slate 900 - Professional, Deep
+              primary: '#ea580c', // Orange 600
+              secondary: '#0f172a', // Slate 900
               accent: '#f59e0b', // Amber 500
               light: {
                 50: '#f8fafc',
@@ -68,14 +67,19 @@
   <script type="importmap">
 {
   "imports": {
-    "@google/genai": "https://esm.sh/@google/genai@^1.41.0",
-    "lucide-react": "https://esm.sh/lucide-react@^0.564.0",
-    "react-dom/client": "https://esm.sh/react-dom@^19.2.4/client",
+    "react": "https://esm.sh/react@18.3.1",
+    "react-dom/client": "https://esm.sh/react-dom@18.3.1/client",
+    "react-dom": "https://esm.sh/react-dom@18.3.1",
+    "lucide-react": "https://esm.sh/lucide-react@0.344.0",
+    "@google/genai": "https://esm.sh/@google/genai@0.1.0",
+    "firebase/app": "https://esm.sh/firebase@10.12.2/app",
+    "firebase/auth": "https://esm.sh/firebase@10.12.2/auth",
+    "firebase/firestore": "https://esm.sh/firebase@10.12.2/firestore",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.4",
     "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
     "react/": "https://esm.sh/react@^19.2.4/",
-    "react": "https://esm.sh/react@^19.2.4",
-    "vite": "https://esm.sh/vite@^7.3.1",
-    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.4"
+    "firebase/": "https://esm.sh/firebase@^12.9.0/",
+    "vite": "https://esm.sh/vite@^7.3.1"
   }
 }
 </script>

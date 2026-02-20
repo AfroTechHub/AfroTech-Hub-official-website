@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Lock, ArrowRight, AlertCircle, ArrowLeft } from 'lucide-react';
+import { User, Lock, ArrowRight, AlertCircle, ArrowLeft, Loader2 } from 'lucide-react';
 import { storageService } from '../services/storage';
 import { User as UserType, ViewState } from '../types';
 
@@ -10,22 +10,28 @@ interface LoginProps {
 
 const Login: React.FC<LoginProps> = ({ onLogin, onNavigate }) => {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState(''); // Dummy password field for UX
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setIsLoading(true);
     
-    // Simulate API delay
-    setTimeout(() => {
-      const user = storageService.login(email);
-      if (user) {
-        onLogin(user);
+    try {
+      const user = await storageService.login(email, password);
+      onLogin(user); // Triggers navigation in parent, or we can nav directly
+    } catch (err: any) {
+      console.error(err);
+      if (err.code === 'auth/invalid-credential') {
+        setError('Invalid email or password.');
       } else {
-        setError('User not found. Please sign up first.');
+        setError(err.message || 'Failed to sign in.');
       }
-    }, 800);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -91,9 +97,10 @@ const Login: React.FC<LoginProps> = ({ onLogin, onNavigate }) => {
 
           <button 
             type="submit"
-            className="w-full bg-primary hover:bg-orange-700 text-white font-bold py-3 rounded-lg shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2"
+            disabled={isLoading}
+            className="w-full bg-primary hover:bg-orange-700 text-white font-bold py-3 rounded-lg shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
           >
-            Sign In <ArrowRight className="w-4 h-4" />
+            {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <>Sign In <ArrowRight className="w-4 h-4" /></>}
           </button>
         </form>
 

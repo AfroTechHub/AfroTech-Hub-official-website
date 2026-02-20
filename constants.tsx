@@ -16,6 +16,11 @@ export const PROJECTS: Project[] = [
     demoUrl: '#',
     repoUrl: '#',
     featured: true,
+    status: 'published',
+    category: 'Business',
+    version: '2.1.0',
+    downloads: 12540,
+    rating: 4.8
   },
   {
     id: '2',
@@ -26,6 +31,11 @@ export const PROJECTS: Project[] = [
     demoUrl: '#',
     repoUrl: '#',
     featured: true,
+    status: 'published',
+    category: 'Productivity',
+    version: '1.0.5',
+    downloads: 8200,
+    rating: 4.9
   },
   {
     id: '3',
@@ -35,6 +45,11 @@ export const PROJECTS: Project[] = [
     tags: ['React Native', 'Redux', 'Firebase'],
     demoUrl: '#',
     featured: false,
+    status: 'in_review',
+    category: 'Productivity',
+    version: '0.9.0',
+    downloads: 150,
+    rating: 0
   },
   {
     id: '4',
@@ -44,6 +59,11 @@ export const PROJECTS: Project[] = [
     tags: ['Vue.js', 'WebSockets', 'Chart.js'],
     repoUrl: '#',
     featured: false,
+    status: 'published',
+    category: 'Finance',
+    version: '1.2.0',
+    downloads: 3500,
+    rating: 4.2
   }
 ];
 
@@ -71,4 +91,12 @@ Guidelines:
 3. Only answer questions related to ${MY_NAME}'s apps, technology, and services.
 4. If asked about contact info, refer them to the contact section or the email provided.
 5. If asked something outside this scope, politely decline and steer the conversation back to our apps.
+`;
+
+export const CONTACT_DRAFT_PROMPT = `
+You are a professional communication assistant. 
+Draft a concise, professional inquiry message for a client who wants to contact "${MY_NAME}".
+The client's intent is: "{topic}".
+Keep it under 100 words. 
+Do not include placeholders like [Your Name]. Just write the body of the message.
 `;
